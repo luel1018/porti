@@ -2,6 +2,9 @@ package org.example.porti.namecard.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import org.example.porti.user.model.AuthUserDetails;
+import org.example.porti.user.model.User;
 
 public class NamecardDto {
     @Getter
@@ -19,6 +22,7 @@ public class NamecardDto {
                     .color(entity.getColor())
                     .title(entity.getTitle())
                     .layout(entity.getLayout())
+                    .user(entity.getUser().getIdx())
                     .build();
         }
     }
@@ -30,7 +34,6 @@ public class NamecardDto {
         private String title;
         private String layout;
         private String color;
-        private Long user;
 
         public Namecard toEntity(){
             return Namecard.builder()
