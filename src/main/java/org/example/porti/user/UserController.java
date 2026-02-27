@@ -20,9 +20,16 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/signup")
+    @PostMapping("/private/signup")
     public ResponseEntity signup(@RequestBody UserDto.SignupReq dto) {
         UserDto.SignupRes result =  userService.signup(dto);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/enterprise/signup")
+    public ResponseEntity enterpriseSignup(@RequestBody UserDto.SignupReq dto) {
+        UserDto.SignupRes result =  userService.enterpriseSignup(dto);
 
         return ResponseEntity.ok(result);
     }

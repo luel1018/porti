@@ -44,4 +44,18 @@ public class UserService implements UserDetailsService {
         return AuthUserDetails.from(user);
     }
 
+    public UserDto.SignupRes enterpriseSignup(UserDto.SignupReq dto) {
+        // 이메일 중복 확인
+        if(userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw BaseException.from(SIGNUP_DUPLICATE_EMAIL);
+        }
+
+
+        User user = dto.toEnterpriseEntity();
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(user);
+
+
+        return UserDto.SignupRes.from(user);
+    }
 }

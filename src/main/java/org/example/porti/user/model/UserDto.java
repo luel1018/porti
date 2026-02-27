@@ -19,8 +19,19 @@ public class UserDto {
                     .name(this.name)
                     .password(this.password)
                     .phone(this.phone)
-                    .enable(true)
+                    .enable(false)
                     .role("ROLE_USER")
+                    .build();
+        }
+
+        public User toEnterpriseEntity() {
+            return User.builder()
+                    .email(this.email)
+                    .name(this.name)
+                    .password(this.password)
+                    .phone(this.phone)
+                    .enable(true)
+                    .role("ROLE_ENTERPRISE")
                     .build();
         }
     }
