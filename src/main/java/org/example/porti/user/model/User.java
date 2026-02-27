@@ -2,6 +2,7 @@ package org.example.porti.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.porti.namecard.model.Namecard;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -39,4 +40,11 @@ public class User {
     @Setter
     private boolean enable;
     private String role;
+
+    // 관계
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="namecard_idx")
+    private Namecard namecard;
+
+    
 }
