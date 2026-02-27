@@ -14,6 +14,7 @@ import java.util.List;
 public class AuthUserDetails implements UserDetails {
     private Long idx;
     private String username;
+    private String nickname;
     private String password;
     private boolean enable;
     private String role;
@@ -22,6 +23,7 @@ public class AuthUserDetails implements UserDetails {
         return AuthUserDetails.builder()
                 .idx(entity.getIdx())
                 .username(entity.getEmail())
+                .nickname(entity.getName())
                 .password(entity.getPassword())
                 .enable(entity.isEnable())
                 .role(entity.getRole())

@@ -27,6 +27,13 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/signup/enterprise")
+    public ResponseEntity enterpriseSignup(@RequestBody UserDto.SignupReq dto) {
+        UserDto.SignupRes result =  userService.enterpriseSignup(dto);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity login( @RequestBody UserDto.LoginReq dto) {
@@ -37,7 +44,7 @@ public class UserController {
         AuthUserDetails user = (AuthUserDetails) authentication.getPrincipal();
 
         if(user != null) {
-            String jwt = jwtUtil.createToken(user.getIdx(), user.getUsername(), user.getRole());
+            String jwt = jwtUtil.createToken(user.getIdx(), user.getUsername(), user.getRole(), user.getNickname());
             return ResponseEntity.ok().header("Set-Cookie", "ATOKEN=" + jwt + "; Path=/").build();
         }
 
