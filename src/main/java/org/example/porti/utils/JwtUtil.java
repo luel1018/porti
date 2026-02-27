@@ -23,11 +23,12 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
     }
 
-    public String createToken(Long idx, String email, String role) {
+    public String createToken(Long idx, String email, String role, String nickname) {
         String jwt = Jwts.builder()
                 .claim("idx", idx)
                 .claim("email", email)
                 .claim("role", role)
+                .claim("nickname",nickname)
                 .issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + expire)).signWith(getEncodedKey()).compact();
 
         return jwt;
