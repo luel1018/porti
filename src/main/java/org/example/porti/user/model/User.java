@@ -10,11 +10,10 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
