@@ -19,7 +19,7 @@ public class UserDto {
                     .name(this.name)
                     .password(this.password)
                     .phone(this.phone)
-                    .enable(false)
+                    .enable(true)
                     .role("ROLE_USER")
                     .build();
         }
