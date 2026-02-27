@@ -10,6 +10,7 @@ public class UserDto {
     public static class SignupReq {
         private String email;
         private String name;
+        private String phone;
         private String password;
 
         public User toEntity() {
@@ -17,6 +18,7 @@ public class UserDto {
                     .email(this.email)
                     .name(this.name)
                     .password(this.password)
+                    .phone(this.phone)
                     .enable(false)
                     .role("ROLE_USER")
                     .build();
