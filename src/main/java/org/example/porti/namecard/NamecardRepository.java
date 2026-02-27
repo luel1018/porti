@@ -1,4 +1,7 @@
 package org.example.porti.namecard;
 
-public interface NamecardRepository {
+import org.example.porti.namecard.model.Namecard;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface NamecardRepository extends JpaRepository<Namecard, Long> {
 }
