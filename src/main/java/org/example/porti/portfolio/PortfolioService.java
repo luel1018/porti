@@ -9,6 +9,8 @@ import org.example.porti.section.model.SectionDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PortfolioService {
@@ -33,5 +35,10 @@ public class PortfolioService {
         Portfolio portfolio = portfolioRepository.findById(idx)
                 .orElseThrow(() -> new RuntimeException("포트폴리오를 찾을 수 없습니다."));
         return PortfolioDto.Res.from(portfolio);
+    }
+
+    public List<PortfolioDto.portRes> list() {
+        List<Portfolio> portfolioList = portfolioRepository.findAll();
+        return portfolioList.stream().map(PortfolioDto.portRes::from).toList();
     }
 }

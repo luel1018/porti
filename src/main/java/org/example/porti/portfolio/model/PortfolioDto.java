@@ -54,4 +54,19 @@ public class PortfolioDto {
                     .build();
         }
     }
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class portRes {
+        private Long idx;
+        private String title;
+
+        public static portRes from(Portfolio entity) {
+            return portRes.builder()
+                    .idx(entity.getIdx())
+                    .title(entity.getTitle())
+                    .build();
+        }
+    }
 }
