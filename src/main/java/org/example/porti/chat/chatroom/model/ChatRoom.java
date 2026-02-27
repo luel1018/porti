@@ -17,10 +17,10 @@ public class ChatRoom extends BaseEntity {
     Long idx;
 
     @ManyToOne // 호스트 유저와 1:N 관계
-    @JoinColumn(name = "host_user_id")
+    @JoinColumn(name = "host_user_idx")
     private User hostUser;
 
     @ManyToOne // 게스트 유저와 1:N 관계
-    @JoinColumn(name = "guest_user_id")
+    @JoinColumn(name = "guest_user_idx")
     private User guestUser;
 }
