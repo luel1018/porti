@@ -2,27 +2,55 @@ package org.example.porti.namecard.model;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import org.example.porti.user.model.AuthUserDetails;
-import org.example.porti.user.model.User;
+import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 public class NamecardDto {
     @Getter
     @Builder
-    public static class List{
+    public static class SliceRes{
+        private List<NamecardRes> namecardList;
+
+        public static SliceRes toDto(Slice<Namecard> result){
+            return SliceRes.builder()
+                    .namecardList(result.get().map(NamecardRes::toDto).toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    public static class NamecardRes {
         private Long idx;
+        private String email;
         private String title;
         private String layout;
         private String color;
-        private Long user;
+        private String affiliation;
+        private String name;
+        private String profileImage;
+        private String career;
+        private String url;
+        private String address;
+        private String phone;
+        private List<String> keywords;
 
-        public static NamecardDto.List toDto(Namecard entity){
-            return List.builder()
+        public static NamecardRes toDto(Namecard entity){
+            return NamecardRes.builder()
                     .idx(entity.getIdx())
+                    .email(entity.getUser().getEmail())
                     .color(entity.getColor())
                     .title(entity.getTitle())
                     .layout(entity.getLayout())
-                    .user(entity.getUser().getIdx())
+                    .affiliation(entity.getUser().getAffiliation())
+                    .name(entity.getUser().getName())
+                    .profileImage(entity.getUser().getProfileImage())
+                    .career(entity.getUser().getCareer())
+                    .url(entity.getUrl())
+                    .phone(entity.getUser().getPhone())
+                    .address(entity.getUser().getAddress())
+                    .keywords(entity.getKeywords())
                     .build();
         }
     }
@@ -34,12 +62,16 @@ public class NamecardDto {
         private String title;
         private String layout;
         private String color;
+        private String url;
+        private List<String> keywords;
 
         public Namecard toEntity(){
             return Namecard.builder()
                     .title(this.title)
                     .layout(this.layout)
                     .color(this.color)
+                    .url(this.url)
+                    .keywords(this.keywords)
                     .build();
         }
     }
