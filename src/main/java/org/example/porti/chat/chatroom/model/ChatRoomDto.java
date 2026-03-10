@@ -2,13 +2,8 @@ package org.example.porti.chat.chatroom.model;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.example.porti.namecard.model.Namecard;
-import org.example.porti.namecard.model.NamecardDto;
 import org.example.porti.user.model.User;
-import org.springframework.data.domain.Slice;
-
 import java.util.Date;
-import java.util.List;
 
 public class ChatRoomDto {
     public static ChatRoom toEntity(User hostUser, User guestUser) {
