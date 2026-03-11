@@ -30,19 +30,27 @@ public class NamecardService {
         return NamecardDto.SliceRes.toDto(result);
     }
 
+//    public List<NamecardDto.NamecardRes> list(){
+//
+//    }
+
     @Transactional
     public void reg(NamecardDto.Register dto, AuthUserDetails user) {
-        Long userIdx = user.getIdx();
-
-        Namecard namecard = namecardRepository.findByUserIdx(userIdx).orElseGet(()->{
-            User userEntity = userRepository.findById(userIdx)
-                    .orElseThrow(()->new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-            return Namecard.builder().user(userEntity).build();
-        });
-
-        namecard.update(dto);
-
-//        namecardRepository.save(namecard);
+        User userEntity = userRepository.findById(user.getIdx()).orElseThrow();
+        namecardRepository.findByUserIdx(user.getIdx())
+                .ifPresentOrElse(
+                        currentNamecard ->{
+                            currentNamecard.update(dto);
+//                            currentNamecard.setUser(userEntity);
+                        },
+                        () -> {
+                            Namecard newNamecard = new Namecard();
+                            newNamecard.update(dto);
+                            newNamecard.setUser(userEntity);
+                            namecardRepository.save(newNamecard);
+                            userEntity.assignNamecard(newNamecard);
+                        }
+                );
     }
 
     public NamecardDto.NamecardRes singleUser(Long userId) {

@@ -35,8 +35,9 @@ public class Namecard {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_idx")
+    @JoinColumn(name = "user_idx")
     private User user;
 
     // Namecard 엔티티 내부
@@ -53,7 +54,6 @@ public class Namecard {
         if (StringUtils.hasText(dto.getUrl())) {
             this.url = dto.getUrl();
         }
-
         if (dto.getKeywords() != null && !dto.getKeywords().isEmpty()) {
             this.keywords = dto.getKeywords();
         }
