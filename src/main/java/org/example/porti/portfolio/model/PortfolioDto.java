@@ -34,6 +34,8 @@ public class PortfolioDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+
+    // 포트폴리오 작성 /portfolio-project
     public static class Res {
         private Long idx;
         private String title;

@@ -3,6 +3,9 @@ package org.example.porti.user.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import javax.swing.text.html.parser.Entity;
 
 public class UserDto {
 
@@ -74,4 +77,18 @@ public class UserDto {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    public static class EditNonEssentialReq {
+        private String email;
+        private String name;
+        private String phone;
+        private String address;
+        private String affiliation;
+        private String career;
+        private String gender;
+        private String profile_image;
+    }
+
 }
