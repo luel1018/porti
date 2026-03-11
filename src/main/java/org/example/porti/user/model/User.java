@@ -6,6 +6,7 @@ import org.example.porti.namecard.model.Namecard;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -47,12 +48,31 @@ public class User {
     private Namecard namecard;
 
     public void updateNonEssential(UserDto.EditNonEssentialReq dto){
-        this.address=dto.getAddress();
-        this.affiliation=dto.getAffiliation();
-        this.career=dto.getCareer();
-        this.gender=dto.getGender();
-        this.profileImage=dto.getProfile_image();
-        this.updatedAt=LocalDateTime.now();
+        if (StringUtils.hasText(dto.getAddress())) {
+            this.address = dto.getAddress();
+        }
+        if (StringUtils.hasText(dto.getAffiliation())) {
+            this.affiliation = dto.getAffiliation();
+        }
+        if (StringUtils.hasText(dto.getCareer())) {
+            this.career = dto.getCareer();
+        }
+        if (StringUtils.hasText(dto.getProfile_image())) {
+            this.profileImage = dto.getProfile_image();
+        }
+        if (StringUtils.hasText(dto.getGender())) {
+            this.gender = dto.getGender();
+        }
+        if (StringUtils.hasText(dto.getName())) {
+            this.name = dto.getName();
+        }
+        if (StringUtils.hasText(dto.getEmail())) {
+            this.email = dto.getEmail();
+        }
+        if (StringUtils.hasText(dto.getPhone())) {
+            this.phone = dto.getPhone();
+        }
     }
+
 
 }

@@ -80,21 +80,14 @@ public class UserDto {
     @Builder
     @Getter
     public static class EditNonEssentialReq {
+        private String email;
+        private String name;
+        private String phone;
         private String address;
         private String affiliation;
         private String career;
         private String gender;
         private String profile_image;
-        public User from(Long idx) {
-            return User.builder()
-                    .idx(idx)
-                    .address(this.address)
-                    .affiliation(this.affiliation)
-                    .career(this.career)
-                    .gender(this.gender)
-                    .profileImage(this.profile_image)
-                    .build();
-        }
     }
 
 }
