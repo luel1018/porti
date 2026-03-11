@@ -10,6 +10,8 @@ import org.example.porti.user.model.User;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
@@ -23,5 +25,10 @@ public class ChatMessageService {
 
         ChatMessage chatMessage = req.toEntity(room, sender);
         return ChatMessageDto.Res.from(chatMessageRepository.save(chatMessage));
+    }
+
+    public List<ChatMessageDto.Res> messages(Long roomIdx) {
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatRoomIdxOrderByCreatedAtAsc(roomIdx);
+        return messages.stream().map(ChatMessageDto.Res::from).toList();
     }
 }
