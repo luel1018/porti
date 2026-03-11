@@ -68,7 +68,7 @@ public class DummyDataInserter {
                 namecardStmt.setString(2, "LAYOUT_A"); // layout
                 namecardStmt.setString(3, i % 2 == 0 ? "BLUE" : "BLACK"); // color
                 namecardStmt.setString(4, "https://porti.example.com/user" + i); // url
-                namecardStmt.setString(5, "Java,Spring,Backend"); // keywords (DB엔 문자열로 저장된다고 가정)
+                namecardStmt.setString(5, "[\"Java\",\"Spring\",\"Backend\"]");
                 namecardStmt.setTimestamp(6, now); // created_at
                 namecardStmt.setTimestamp(7, now); // updated_at
                 namecardStmt.setLong(8, i); // user_idx

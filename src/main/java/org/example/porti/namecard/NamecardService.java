@@ -12,6 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -22,17 +23,18 @@ public class NamecardService {
     private final NamecardRepository namecardRepository;
     private final UserRepository userRepository;
 
-    public NamecardDto.SliceRes list(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-
-        Slice<Namecard> result = namecardRepository.findAll(pageRequest);
-
-        return NamecardDto.SliceRes.toDto(result);
-    }
-
-//    public List<NamecardDto.NamecardRes> list(){
+//    public NamecardDto.SliceRes list(int page, int size) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
 //
+//        Slice<Namecard> result = namecardRepository.findAll(pageRequest);
+//
+//        return NamecardDto.SliceRes.toDto(result);
 //    }
+
+    public List<NamecardDto.NamecardRes> list(){
+        List<Namecard> namecardList = namecardRepository.findAll();
+        return namecardList.stream().map(NamecardDto.NamecardRes::toDto).toList();
+    }
 
     @Transactional
     public void reg(NamecardDto.Register dto, AuthUserDetails user) {
