@@ -5,7 +5,9 @@ import org.example.porti.chat.chatroom.model.ChatRoom;
 import org.example.porti.chat.chatroom.model.ChatRoomDto;
 import org.example.porti.user.UserRepository;
 import org.example.porti.user.model.User;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,5 +27,11 @@ public class ChatRoomService {
     public List<ChatRoomDto.ListRes> list(Long idx) {
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByHostUserIdxOrGuestUserIdx(idx, idx);
         return chatRoomList.stream().map(room -> ChatRoomDto.ListRes.from(room, idx)).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isParticipant(Long roomIdx, Long userIdx) {
+        ChatRoom room = chatRoomRepository.findById(roomIdx).orElseThrow(() -> new MessageDeliveryException("Invalid ChatRoom"));
+        return room.getHostUser().getIdx().equals(userIdx) || room.getGuestUser().getIdx().equals(userIdx);
     }
 }
