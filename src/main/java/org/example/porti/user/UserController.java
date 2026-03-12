@@ -1,14 +1,12 @@
 package org.example.porti.user;
 
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import org.example.porti.common.model.BaseResponse;
 import org.example.porti.common.model.BaseResponseStatus;
 import org.example.porti.user.model.AuthUserDetails;
 import org.example.porti.user.model.UserDto;
 import org.example.porti.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,13 +26,12 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity signup(@RequestBody UserDto.SignupReq dto) {
         UserDto.SignupRes result =  userService.signup(dto);
-
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
-    @PostMapping("/signup/enterprise")
-    public ResponseEntity enterpriseSignup(@RequestBody UserDto.SignupReq dto) {
-        UserDto.SignupRes result =  userService.enterpriseSignup(dto);
+    @PostMapping("/signup/company")
+    public ResponseEntity companySignup(@RequestBody UserDto.SignupReq dto) {
+        UserDto.SignupRes result =  userService.companySignup(dto);
 
         return ResponseEntity.ok(BaseResponse.success(result));
     }
