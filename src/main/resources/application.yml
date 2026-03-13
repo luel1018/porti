@@ -26,6 +26,8 @@ management:
     tracing:
       endpoint: ${JAEGER_URL}
 
+
+
 spring:
   mail:
     host: smtp.gmail.com
