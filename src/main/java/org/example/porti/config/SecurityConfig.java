@@ -1,5 +1,6 @@
 package org.example.porti.config;
 
+import io.netty.handler.codec.http.HttpMethod;
 import org.example.porti.config.filter.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 (auth) -> auth
                         .requestMatchers("/namecard/*").permitAll()
+                        .requestMatchers("/login","/user/login").permitAll()
                         .anyRequest().permitAll()
         );
 

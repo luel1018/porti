@@ -57,8 +57,7 @@ public class UserController {
 
         if(user != null) {
             String jwt = jwtUtil.createToken(user.getIdx(), user.getUsername(), user.getRole(), user.getNickname());
-            Long expire = 60000000000L;
-            String cookie = String.format("ATOKEN=%s; HttpOnly; Secure; Domain=localhost; Path=/; Max-Age=%s",jwt,expire);
+            String cookie = String.format("ATOKEN=%s; Domain=localhost; Path=/;",jwt);
             return ResponseEntity.ok().header("Set-Cookie", cookie).body(BaseResponse.success("성공"));
         }
 
