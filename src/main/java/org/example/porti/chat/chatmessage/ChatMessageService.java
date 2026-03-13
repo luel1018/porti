@@ -5,9 +5,12 @@ import org.example.porti.chat.chatmessage.model.ChatMessage;
 import org.example.porti.chat.chatmessage.model.ChatMessageDto;
 import org.example.porti.chat.chatroom.ChatRoomRepository;
 import org.example.porti.chat.chatroom.model.ChatRoom;
+import org.example.porti.notification.NotificationService;
 import org.example.porti.user.UserRepository;
 import org.example.porti.user.model.User;
 import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +20,33 @@ import java.util.List;
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final SimpUserRegistry userRegistry;
 
     public ChatMessageDto.Res saveMessage(ChatMessageDto.Send req, Long senderIdx) {
         ChatRoom room = chatRoomRepository.findById(req.getRoomIdx()).orElseThrow(() -> new MessageDeliveryException("Invalid ChatRoom"));
         User sender = userRepository.findById(senderIdx).orElseThrow(() -> new MessageDeliveryException("Invalid Sender"));
+        User receiver = room.getOpponent(senderIdx);
 
         ChatMessage chatMessage = req.toEntity(room, sender);
-        return ChatMessageDto.Res.from(chatMessageRepository.save(chatMessage));
+        ChatMessage res = chatMessageRepository.save(chatMessage);
+
+        String destination = "/sub/chat/room/" + req.getRoomIdx();
+        if (!isUserSubscribed(receiver.getEmail(), destination)) {
+            notificationService.sendToUser(receiver.getIdx(), sender.getEmail(), req.getContents());
+        }
+
+        return ChatMessageDto.Res.from(res);
+    }
+
+    private boolean isUserSubscribed(String username, String destination) {
+        SimpUser simpUser = userRegistry.getUser(username);
+        if (simpUser == null) return false;
+
+        return simpUser.getSessions().stream()
+                .flatMap(session -> session.getSubscriptions().stream())
+                .anyMatch(sub -> sub.getDestination().equals(destination));
     }
 
     public List<ChatMessageDto.Res> messages(Long roomIdx) {
