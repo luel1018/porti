@@ -20,7 +20,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(email);
             String subject = "[Poticard] 신규 가입 이메일 인증 안내";
-            String backurl = "http://10.10.10.20:8080/";
+            String backurl = System.getenv("BACK_URL");
             String htmlContents = "<!DOCTYPE html>\n" +
                     "<html lang=\"ko\">\n" +
                     "<head>\n" +
