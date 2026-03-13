@@ -1,14 +1,12 @@
 package org.example.porti.user;
 
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import org.example.porti.common.model.BaseResponse;
 import org.example.porti.common.model.BaseResponseStatus;
 import org.example.porti.user.model.AuthUserDetails;
 import org.example.porti.user.model.UserDto;
 import org.example.porti.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,15 +24,21 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody UserDto.SignupReq dto) {
-        UserDto.SignupRes result =  userService.signup(dto);
+    public ResponseEntity signup(@RequestBody UserDto.SignupReq dto, @RequestParam("type") String type) {
+        if (type.equals("personal")) {
+            UserDto.SignupRes result =  userService.signup(dto);
+            return ResponseEntity.ok(BaseResponse.success(result));
+        }
+        else{
+            UserDto.SignupRes result =  userService.companySignup(dto);
+            return ResponseEntity.ok(BaseResponse.success(result));
+        }
 
-        return ResponseEntity.ok(BaseResponse.success(result));
     }
 
-    @PostMapping("/signup/enterprise")
-    public ResponseEntity enterpriseSignup(@RequestBody UserDto.SignupReq dto) {
-        UserDto.SignupRes result =  userService.enterpriseSignup(dto);
+    @PostMapping("/signup/company")
+    public ResponseEntity companySignup(@RequestBody UserDto.SignupReq dto) {
+        UserDto.SignupRes result =  userService.companySignup(dto);
 
         return ResponseEntity.ok(BaseResponse.success(result));
     }
@@ -50,7 +54,9 @@ public class UserController {
 
         if(user != null) {
             String jwt = jwtUtil.createToken(user.getIdx(), user.getUsername(), user.getRole(), user.getNickname());
-            return ResponseEntity.ok().header("Set-Cookie", "ATOKEN=" + jwt + "; Path=/").body(BaseResponse.success("성공"));
+            Long expire = 60000000000L;
+            String cookie = String.format("ATOKEN=%s; HttpOnly; Secure; Domain=localhost; Path=/; Max-Age=%s",jwt,expire);
+            return ResponseEntity.ok().header("Set-Cookie", cookie).body(BaseResponse.success("성공"));
         }
 
         return ResponseEntity.ok(BaseResponse.fail(BaseResponseStatus.LOGIN_INVALID_USERINFO));
