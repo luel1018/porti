@@ -34,9 +34,8 @@ public class ChatMessageService {
 
         String destination = "/sub/chat/room/" + req.getRoomIdx();
         if (!isUserSubscribed(receiver.getEmail(), destination)) {
-            notificationService.sendToUser(receiver.getIdx(), sender.getEmail(), req.getContents());
+            notificationService.sendToUser(receiver.getIdx(), sender.getIdx(), sender.getEmail(), req.getContents());
         }
-
         return ChatMessageDto.Res.from(res);
     }
 

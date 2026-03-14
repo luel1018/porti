@@ -26,12 +26,14 @@ public class NotificationDto {
     @Getter
     @Builder
     public static class Payload {
-        private String title;
+        private Long senderIdx;
+        private String senderEmail;
         private String contents;
 
         @Override
         public String toString() {
-            return "{\"title\":\""+this.title+"\", \"message\":\""+this.contents+"\"}";
+            return String.format("{\"senderIdx\": %d, \"senderEmail\": \"%s\", \"contents\": \"%s\"}",
+                    this.senderIdx, this.senderEmail, this.contents.replace("\"", "\\\""));
         }
     }
 }

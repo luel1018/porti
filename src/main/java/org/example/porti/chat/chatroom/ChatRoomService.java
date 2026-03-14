@@ -20,6 +20,11 @@ public class ChatRoomService {
     public ChatRoomDto.CreateRes save(Long hostUserIdx, Long guestUserIdx) {
         User hostUser = userRepository.findById(hostUserIdx).orElseThrow();
         User guestUser = userRepository.findById(guestUserIdx).orElseThrow();
+        ChatRoom check1 = chatRoomRepository.findByHostUserIdxAndGuestUserIdx(hostUserIdx, guestUserIdx);
+        ChatRoom check2 = chatRoomRepository.findByHostUserIdxAndGuestUserIdx(guestUserIdx, hostUserIdx);
+        if(check1 != null || check2 != null) {
+            throw new RuntimeException("Room is already exists");
+        }
         ChatRoom chatRoom = ChatRoomDto.toEntity(hostUser, guestUser);
         return ChatRoomDto.CreateRes.from(chatRoomRepository.save(chatRoom));
     }

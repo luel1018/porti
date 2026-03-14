@@ -1,11 +1,11 @@
 package org.example.porti.notification;
 
+import jakarta.transaction.Transactional;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.example.porti.notification.model.NotificationDto;
-import org.example.porti.notification.model.NotificationEntity;
 import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -27,37 +27,21 @@ public class NotificationService {
         this.pushService.setPrivateKey("pWhOI-mTyOyx5hogOmKRiYHDCtm_IMpnz1lzWNdMfKU");
     }
 
+    @Transactional
     public void subscribe(NotificationDto.Subscribe dto) {
-        // 이미 해당 엔드포인트(기기)가 등록되어 있는지 확인
-        notificationRepository.findByEndpoint(dto.getEndpoint())
-                .ifPresentOrElse(
-                        existing -> {
-                            // 이미 있다면 사용자 ID만 업데이트 (기기 주인이 바뀔 수도 있으므로)
-                            NotificationEntity updated = NotificationEntity.builder()
-                                    .idx(existing.getIdx())
-                                    .userIdx(dto.getUserIdx())
-                                    .endpoint(existing.getEndpoint())
-                                    .p256dh(dto.getKeys().get("p256dh"))
-                                    .auth(dto.getKeys().get("auth"))
-                                    .build();
-                            notificationRepository.save(updated);
-                        },
-                        () -> {
-                            // 없다면 새로 저장
-                            notificationRepository.save(dto.toEntity());
-                        }
-                );
+        notificationRepository.deleteByUserIdx(dto.getUserIdx());
+        notificationRepository.save(dto.toEntity());
     }
 
     // receiverIdx로 notification정보를 찾은 후 senderEmail, contents를 포함해서 푸시알림 전송
-    public void sendToUser(Long receiverIdx, String senderEmail, String contents) {
+    public void sendToUser(Long receiverIdx, Long senderIdx, String senderEmail, String contents) {
         // receiverIdx로 notification 정보 확인
         notificationRepository.findAllByUserIdx(receiverIdx).forEach(entity -> {
             try {
                 // subscription + payload(senderEmail + contents)를 notification객체에 담아서 푸시알림 전송
                 Subscription.Keys keys = new Subscription.Keys(entity.getP256dh(), entity.getAuth());
                 Subscription subscription = new Subscription(entity.getEndpoint(), keys);
-                Notification notification = new Notification(subscription, NotificationDto.Payload.builder().title(senderEmail).contents(contents).build().toString());
+                Notification notification = new Notification(subscription, NotificationDto.Payload.builder().senderIdx(senderIdx).senderEmail(senderEmail).contents(contents).build().toString());
                 pushService.send(notification);
             } catch (Exception e) {
                 e.printStackTrace();
