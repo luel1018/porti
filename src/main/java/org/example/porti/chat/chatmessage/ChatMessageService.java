@@ -1,5 +1,6 @@
 package org.example.porti.chat.chatmessage;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.porti.chat.chatmessage.model.ChatMessage;
 import org.example.porti.chat.chatmessage.model.ChatMessageDto;
@@ -29,14 +30,20 @@ public class ChatMessageService {
         User sender = userRepository.findById(senderIdx).orElseThrow(() -> new MessageDeliveryException("Invalid Sender"));
         User receiver = room.getOpponent(senderIdx);
 
-        ChatMessage chatMessage = req.toEntity(room, sender);
-        ChatMessage res = chatMessageRepository.save(chatMessage);
-
         String destination = "/sub/chat/room/" + req.getRoomIdx();
-        if (!isUserSubscribed(receiver.getEmail(), destination)) {
-            notificationService.sendToUser(receiver.getIdx(), sender.getEmail(), req.getContents());
-        }
+        boolean isReceiverSubscribed = isUserSubscribed(receiver.getEmail(), destination);
 
+        ChatMessage chatMessage = ChatMessage.builder()
+                .chatRoom(room)
+                .user(sender)
+                .contents(req.getContents())
+                .isRead(isReceiverSubscribed) // 구독 중이면 true(1), 아니면 false(0)
+                .build();
+
+        ChatMessage res = chatMessageRepository.save(chatMessage);
+        if (!isReceiverSubscribed) {
+            notificationService.sendToUser(room, sender, receiver, res);
+        }
         return ChatMessageDto.Res.from(res);
     }
 
@@ -51,6 +58,12 @@ public class ChatMessageService {
 
     public List<ChatMessageDto.Res> messages(Long roomIdx) {
         List<ChatMessage> messages = chatMessageRepository.findAllByChatRoomIdxOrderByCreatedAtAsc(roomIdx);
+
         return messages.stream().map(ChatMessageDto.Res::from).toList();
+    }
+
+    @Transactional
+    public void markMessagesAsRead(Long roomIdx, Long userIdx) {
+        chatMessageRepository.markAsReadByRoomIdxAndNotUserIdx(roomIdx, userIdx);
     }
 }
