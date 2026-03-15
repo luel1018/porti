@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.porti.chat.attachment.ChatAttachmentsRepository;
 import org.example.porti.chat.attachment.model.ChatAttachments;
+import org.example.porti.chat.attachment.model.ChatAttachmentsDto;
 import org.example.porti.chat.message.model.ChatMessage;
 import org.example.porti.chat.message.model.ChatMessageDto;
 import org.example.porti.chat.message.model.ContentsType;
@@ -20,6 +21,7 @@ import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,22 +85,17 @@ public class ChatMessageService {
         ChatMessage chatMessage = sendDto.toEntity(room, sender, contentsType, isReceiverSubscribed);
         ChatMessage res = chatMessageRepository.save(chatMessage);
 
+        List<ChatAttachments> savedAttachments = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
                 String url = cloudUploadService.saveFile(file);
-
-                ChatAttachments attachment = ChatAttachments.builder()
-                        .filePath(url)
-                        .fileName(file.getOriginalFilename())
-                        .fileType(file.getContentType())
-                        .fileSize(file.getSize())
-                        .chatMessage(res)
-                        .build();
-                chatAttachmentsRepository.save(attachment);
+                ChatAttachments attachment = ChatAttachmentsDto.toEntity(file, url, res);
+                savedAttachments.add(chatAttachmentsRepository.save(attachment));
             } catch (Exception e) {
                 throw new RuntimeException("파일 업로드 실패: " + e.getMessage());
             }
         }
+        res.setAttachments(savedAttachments);
 
         if (!isReceiverSubscribed) {
             notificationService.sendToUser(room, sender, receiver, res);

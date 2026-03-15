@@ -2,8 +2,21 @@ package org.example.porti.chat.attachment.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.example.porti.chat.message.model.ChatMessage;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ChatAttachmentsDto {
+
+    public static ChatAttachments toEntity(MultipartFile file, String url, ChatMessage chatMessage) {
+        return ChatAttachments.builder()
+                .filePath(url)
+                .fileName(file.getOriginalFilename())
+                .fileType(file.getContentType())
+                .fileSize(file.getSize())
+                .chatMessage(chatMessage)
+                .build();
+    }
+
     @Getter
     @Builder
     public static class Res {

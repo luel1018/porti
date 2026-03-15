@@ -1,20 +1,16 @@
 package org.example.porti.chat.message.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.porti.chat.attachment.model.ChatAttachments;
 import org.example.porti.chat.room.model.ChatRoom;
 import org.example.porti.common.model.BaseEntity;
 import org.example.porti.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Builder
+@Getter @Builder @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class ChatMessage extends BaseEntity {
     @Id
@@ -38,5 +34,5 @@ public class ChatMessage extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "chatMessage", cascade = CascadeType.ALL)
-    private List<ChatAttachments> attachments = new ArrayList<>();
+    private List<ChatAttachments> attachments;
 }
