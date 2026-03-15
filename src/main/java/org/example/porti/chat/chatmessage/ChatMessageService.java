@@ -10,11 +10,14 @@ import org.example.porti.notification.NotificationService;
 import org.example.porti.user.UserRepository;
 import org.example.porti.user.model.User;
 import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUser;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class ChatMessageService {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
     private final SimpUserRegistry userRegistry;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public ChatMessageDto.Res saveMessage(ChatMessageDto.Send req, Long senderIdx) {
         ChatRoom room = chatRoomRepository.findById(req.getRoomIdx()).orElseThrow(() -> new MessageDeliveryException("Invalid ChatRoom"));
@@ -65,5 +69,12 @@ public class ChatMessageService {
     @Transactional
     public void markMessagesAsRead(Long roomIdx, Long userIdx) {
         chatMessageRepository.markAsReadByRoomIdxAndNotUserIdx(roomIdx, userIdx);
+    }
+
+    public void sendReadReceipt(Long roomIdx) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "READ_RECEIPT");
+        payload.put("roomIdx", roomIdx);
+        messagingTemplate.convertAndSend("/sub/chat/room/" + roomIdx, payload);
     }
 }
