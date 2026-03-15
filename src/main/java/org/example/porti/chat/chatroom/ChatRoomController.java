@@ -34,6 +34,7 @@ public class ChatRoomController {
     @GetMapping("/{roomIdx}/messages")
     public ResponseEntity getMessages(@PathVariable Long roomIdx, @AuthenticationPrincipal AuthUserDetails currentUser) {
         chatMessageService.markMessagesAsRead(roomIdx, currentUser.getIdx());
+        chatMessageService.sendReadReceipt(roomIdx);
         List<ChatMessageDto.Res> messages = chatMessageService.messages(roomIdx);
         return ResponseEntity.ok(BaseResponse.success(messages));
     }
