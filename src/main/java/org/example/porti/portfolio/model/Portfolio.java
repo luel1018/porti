@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.porti.section.model.Section;
 import org.example.porti.user.model.User;
 import org.example.porti.utils.StringListConverter;
+import org.example.porti.common.model.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-public class Portfolio {
+public class Portfolio extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;

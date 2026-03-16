@@ -10,14 +10,11 @@ import org.example.porti.upload.CloudUploadService;
 import org.example.porti.user.UserRepository;
 import org.example.porti.user.model.AuthUserDetails;
 import org.example.porti.user.model.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -28,11 +25,6 @@ public class PortfolioService {
     private final SectionRepository sectionRepository;
     private final CloudUploadService cloudUploadService;
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
 
     @Transactional
     public Long create(AuthUserDetails authUser, PortfolioDto.Req dto, MultipartFile image) {
@@ -94,5 +86,21 @@ public class PortfolioService {
             Section section = sectionRepository.findById(sReq.getIdx()).get();
             section.setSectionOrder(sReq.getSectionOrder());
         }
+    }
+
+    @Transactional
+    public void delete(Long portfolioIdx, AuthUserDetails authUser, String title) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioIdx)
+                .orElseThrow(() -> new RuntimeException("포트폴리오를 찾을 수 없습니다."));
+
+        if (!portfolio.getUser().getIdx().equals(authUser.getIdx())) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        if (!portfolio.getTitle().equals(title)) {
+            throw new RuntimeException("입력한 제목이 포트폴리오 제목과 일치하지 않습니다.");
+        }
+
+        portfolioRepository.delete(portfolio);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.example.porti.common.model.BaseResponseStatus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -82,5 +83,20 @@ public class PortfolioController {
         String contents = request.get("contents");
         List<String> keywords = aiService.getAiKeywords(contents);
         return ResponseEntity.ok(BaseResponse.success(keywords));
+    }
+
+    // 포트폴리오 삭제
+    @PostMapping("/delete/{idx}")
+    public ResponseEntity delete(
+            @PathVariable Long idx,
+            @AuthenticationPrincipal AuthUserDetails user,
+            @RequestBody Map<String, String> request) {
+        try {
+            String title = request.get("title");
+            portfolioService.delete(idx, user, title);
+            return ResponseEntity.ok(BaseResponse.success("포트폴리오가 삭제되었습니다."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(BaseResponse.fail(BaseResponseStatus.FAIL, e.getMessage()));
+        }
     }
 }
