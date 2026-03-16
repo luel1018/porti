@@ -7,6 +7,9 @@ import org.example.porti.section.SectionRepository;
 import org.example.porti.section.model.Section;
 import org.example.porti.section.model.SectionDto;
 import org.example.porti.upload.CloudUploadService;
+import org.example.porti.user.UserRepository;
+import org.example.porti.user.model.AuthUserDetails;
+import org.example.porti.user.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +35,7 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final SectionRepository sectionRepository;
     private final CloudUploadService cloudUploadService;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -39,7 +43,10 @@ public class PortfolioService {
     private String geminiApiKey;
 
     @Transactional
-    public Long create(PortfolioDto.Req dto, MultipartFile image) {
+    public Long create(AuthUserDetails authUser, PortfolioDto.Req dto, MultipartFile image) {
+        User user = userRepository.findById(authUser.getIdx())
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
         String ImageUrl = null;
 
         try {
@@ -48,7 +55,7 @@ public class PortfolioService {
             throw new RuntimeException("이미지 저장에 실패했습니다.", e);
         }
 
-        Portfolio portfolio = dto.toEntity(ImageUrl);
+        Portfolio portfolio = dto.toEntity(ImageUrl, user);
 
         if (portfolio.getSectionList() == null) {
             portfolio.setSectionList(new ArrayList<>());
@@ -71,9 +78,9 @@ public class PortfolioService {
         return PortfolioDto.Res.from(portfolio);
     }
 
-    public List<PortfolioDto.portRes> list(int page, int size) {
+    public List<PortfolioDto.portRes> list(AuthUserDetails authUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<Portfolio> portfolioList = portfolioRepository.findAll(pageable).getContent();
+        List<Portfolio> portfolioList = portfolioRepository.findByUserIdx(authUser.getIdx(), pageable).getContent();
         return portfolioList.stream().map(PortfolioDto.portRes::from).toList();
     }
 

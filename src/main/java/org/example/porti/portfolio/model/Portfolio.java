@@ -3,6 +3,7 @@ package org.example.porti.portfolio.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.porti.section.model.Section;
+import org.example.porti.user.model.User;
 import org.example.porti.utils.StringListConverter;
 
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class Portfolio {
     private String layoutType;  // 레이아웃
 
     private String Image; // 프로젝트 대표 이미지 경로 저장
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
 
     @OneToMany(mappedBy = "portfolio", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

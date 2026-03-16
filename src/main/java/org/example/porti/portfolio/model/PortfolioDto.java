@@ -3,6 +3,7 @@ package org.example.porti.portfolio.model;
 import lombok.*;
 import org.example.porti.section.model.Section;
 import org.example.porti.section.model.SectionDto;
+import org.example.porti.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class PortfolioDto {
         private String fontFamily;
         private String layoutType;
 
-        public Portfolio toEntity(String imageUrl) {
+        public Portfolio toEntity(String imageUrl, User user) {
             return Portfolio.builder()
                     .title(this.title)
                     .period(this.period)
@@ -32,6 +33,7 @@ public class PortfolioDto {
                     .fontFamily(this.fontFamily)
                     .layoutType(this.layoutType)
                     .Image(imageUrl)
+                    .user(user)
                     .build();
         }
     }
