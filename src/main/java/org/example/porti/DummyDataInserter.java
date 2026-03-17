@@ -17,7 +17,7 @@ public class DummyDataInserter {
     private static final String DB_PASSWORD = "qwer1234"; // 예: 1234
 
     public static void main(String[] args) {
-        System.out.println("🚀 더미 데이터 10,000건 삽입을 시작합니다...");
+        System.out.println("🚀 더미 데이터 삽입을 시작합니다...");
         long startTime = System.currentTimeMillis();
 
         // User 테이블 (JPA 예약어 충돌 방지를 위해 백틱 ` 사용)
@@ -73,7 +73,7 @@ public class DummyDataInserter {
                 namecardStmt.setTimestamp(6, now); // created_at
                 namecardStmt.setTimestamp(7, now); // updated_at
                 namecardStmt.setLong(8, i);// user_idx
-                namecardStmt.setString(9, "로비바보");
+                namecardStmt.setString(9, "테스트 내용"+String.format("%04d", i));
 
 
                 namecardStmt.addBatch(); // Namecard 배치에 추가
@@ -92,7 +92,7 @@ public class DummyDataInserter {
             conn.commit();
 
             long endTime = System.currentTimeMillis();
-            System.out.println("✅ 10,000건 삽입 완료! 소요 시간: " + (endTime - startTime) + "ms");
+            System.out.println("✅ 삽입 완료! 소요 시간: " + (endTime - startTime) + "ms");
 
         } catch (SQLException e) {
             e.printStackTrace();
