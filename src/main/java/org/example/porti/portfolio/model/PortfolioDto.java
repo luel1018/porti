@@ -5,6 +5,7 @@ import org.example.porti.section.model.Section;
 import org.example.porti.section.model.SectionDto;
 import org.example.porti.user.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,13 +81,19 @@ public class PortfolioDto {
     public static class portRes {
         private Long idx;
         private String title;
+        private String role;
         private String Image;
+        private String createdAt;
 
         public static portRes from(Portfolio entity) {
+            String formattedDate = entity.getCreatedAt() != null ?
+                    new SimpleDateFormat("yyyy.MM.dd").format(entity.getCreatedAt()) : "";
             return portRes.builder()
                     .idx(entity.getIdx())
                     .title(entity.getTitle())
+                    .role(entity.getRole())
                     .Image(entity.getImage())
+                    .createdAt(formattedDate)
                     .build();
         }
     }
