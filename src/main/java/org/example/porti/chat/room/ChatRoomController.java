@@ -7,6 +7,9 @@ import org.example.porti.chat.message.model.ContentsType;
 import org.example.porti.chat.room.model.ChatRoomDto;
 import org.example.porti.common.model.BaseResponse;
 import org.example.porti.user.model.AuthUserDetails;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -14,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Map;
 
@@ -44,23 +48,28 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{roomIdx}/messages")
-    public ResponseEntity getMessages(@PathVariable Long roomIdx, @AuthenticationPrincipal AuthUserDetails currentUser) {
+    public ResponseEntity getMessages(
+            @PathVariable Long roomIdx,
+            @AuthenticationPrincipal AuthUserDetails currentUser,
+            @PageableDefault(size = 20, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+
         chatMessageService.markMessagesAsRead(roomIdx, currentUser.getIdx());
         chatMessageService.sendReadReceipt(roomIdx);
-        List<ChatMessageDto.Res> messages = chatMessageService.messages(roomIdx);
+
+        Slice<ChatMessageDto.Res> messages = chatMessageService.getMessagesPage(roomIdx, pageable);
         return ResponseEntity.ok(BaseResponse.success(messages));
     }
 
-    @GetMapping("/{roomIdx}/messages/test") // 뒤에 /test를 붙였습니다.
-    public ResponseEntity getMessagesTest(
+    @GetMapping("/{roomIdx}/messages/test")
+    public ResponseEntity getMessages(
             @PathVariable Long roomIdx,
-            @RequestParam Long testUserIdx) { // 인증 대신 파라미터로 받음
+            @RequestParam Long testUserIdx,
+            @PageableDefault(size = 20, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        // 기존 로직과 동일하게 수행
         chatMessageService.markMessagesAsRead(roomIdx, testUserIdx);
         chatMessageService.sendReadReceipt(roomIdx);
-        List<ChatMessageDto.Res> messages = chatMessageService.messages(roomIdx);
 
+        Slice<ChatMessageDto.Res> messages = chatMessageService.getMessagesPage(roomIdx, pageable);
         return ResponseEntity.ok(BaseResponse.success(messages));
     }
 

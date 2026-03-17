@@ -14,6 +14,7 @@ import org.example.porti.notification.NotificationService;
 import org.example.porti.upload.CloudUploadService;
 import org.example.porti.user.UserRepository;
 import org.example.porti.user.model.User;
+import org.springframework.data.domain.Slice;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUser;
@@ -21,6 +22,7 @@ import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,10 +117,11 @@ public class ChatMessageService {
                 .anyMatch(sub -> sub.getDestination().equals(destination));
     }
 
-    public List<ChatMessageDto.Res> messages(Long roomIdx) {
-        List<ChatMessage> messages = chatMessageRepository.findAllByChatRoomIdxOrderByCreatedAtAsc(roomIdx);
-
-        return messages.stream().map(ChatMessageDto.Res::from).toList();
+    @Transactional
+    public Slice<ChatMessageDto.Res> getMessagesPage(Long roomIdx, Pageable pageable) {
+        // 최신순으로 가져와서 DTO로 변환
+        return chatMessageRepository.findAllByChatRoomIdxOrderByCreatedAtDesc(roomIdx, pageable)
+                .map(ChatMessageDto.Res::from);
     }
 
     @Transactional
