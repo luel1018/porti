@@ -68,6 +68,12 @@ public class PortfolioService {
         return portfolioList.stream().map(PortfolioDto.portRes::from).toList();
     }
 
+    public List<PortfolioDto.portRes> userList(Long userIdx, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Portfolio> portfolioList = portfolioRepository.findByUserIdx(userIdx, pageable).getContent();
+        return portfolioList.stream().map(PortfolioDto.portRes::from).toList();
+    }
+
     @Transactional
     public void updateKeywords(Long portfolioIdx, List<String> keywords) {
         Portfolio portfolio = portfolioRepository.findById(portfolioIdx)
