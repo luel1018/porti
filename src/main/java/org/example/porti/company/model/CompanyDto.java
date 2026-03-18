@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 public class CompanyDto {
 
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd-HH:mm:ss";

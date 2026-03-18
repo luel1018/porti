@@ -9,6 +9,7 @@ import org.example.porti.common.model.BaseEntity;
 import org.example.porti.user.model.User;
 import org.hibernate.annotations.ColumnDefault;
 
+
 import java.time.LocalDate;
 
 @Builder
