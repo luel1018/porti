@@ -86,13 +86,18 @@ public class PortfolioService {
         Portfolio portfolio = portfolioRepository.findById(portfolioIdx)
                 .orElseThrow(() -> new RuntimeException("포트폴리오 없음"));
 
-        portfolio.setAccentColor(dto.getAccentColor());
+        portfolio.setTheme(dto.getTheme());
+        portfolio.setLayoutType(dto.getLayoutType());
 
-        for (SectionDto.Req sReq : dto.getSectionList()) {
-            Section section = sectionRepository.findById(sReq.getIdx()).get();
-            section.setSectionOrder(sReq.getSectionOrder());
+        if (dto.getSectionList() != null) {
+            for (SectionDto.Req sReq : dto.getSectionList()) {
+                sectionRepository.findById(sReq.getIdx()).ifPresent(section -> {
+                    section.setSectionOrder(sReq.getSectionOrder());
+                });
+            }
         }
     }
+
 
     @Transactional
     public void delete(Long portfolioIdx, AuthUserDetails authUser, String title) {
