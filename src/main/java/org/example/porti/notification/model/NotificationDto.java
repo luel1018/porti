@@ -34,6 +34,7 @@ public class NotificationDto {
         private Long senderIdx;
         private String senderEmail;
         private String senderName;
+        private String senderProfileImage;
         private String contents;
         private Date contentsCreatedAt;
 
@@ -43,6 +44,7 @@ public class NotificationDto {
                     .senderIdx(sender.getIdx())
                     .senderEmail(sender.getEmail())
                     .senderName(sender.getName())
+                    .senderProfileImage(sender.getProfileImage())
                     .contents(msg.getContents())
                     .contentsCreatedAt(msg.getCreatedAt())
                     .build();
@@ -58,11 +60,12 @@ public class NotificationDto {
             long timeMillis = (this.contentsCreatedAt != null) ? this.contentsCreatedAt.getTime() : System.currentTimeMillis();
 
             return String.format(
-                    "{\"roomIdx\": %d, \"senderIdx\": %d, \"senderEmail\": \"%s\", \"senderName\": \"%s\", \"contents\": \"%s\", \"contentsTime\": %d}",
+                    "{\"roomIdx\": %d, \"senderIdx\": %d, \"senderEmail\": \"%s\", \"senderName\": \"%s\", \"senderProfileImage\": \"%s\", \"contents\": \"%s\", \"contentsTime\": %d}",
                     this.roomIdx,
                     this.senderIdx,
                     this.senderEmail,
                     this.senderName,
+                    this.senderProfileImage,
                     safeContents,
                     timeMillis
             );
